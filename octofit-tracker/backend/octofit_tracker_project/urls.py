@@ -16,9 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'profiles': reverse('profile-list', request=request, format=format),
+        'teams': reverse('team-list', request=request, format=format),
+        'activities': reverse('activity-list', request=request, format=format),
+        'workouts': reverse('workout-list', request=request, format=format),
+        'leaderboard': reverse('leaderboard-list', request=request, format=format),
+        'auth': reverse('dj-rest-auth-login', request=request, format=format),
+    })
+
 urlpatterns = [
+    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     path('api/', include('tracker.urls')),
-    # auth endpoints provided by dj-rest-auth
     path('api/auth/', include('dj_rest_auth.urls')),
 ]
